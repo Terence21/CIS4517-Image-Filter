@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Terence Filtering Page</title>
+</head>
+<body>
+    <div class="content">
+        <h1>Image</h1>
+        <div class="image_container">
+            <img src=" {{url_for('static', filename=filepath) }}" height="200" width="250"/>
+        </div>
+
+        <div class="filter_container">
+            <h1>FILTERS:</h1>
+            <form method="post" action="/filtering/{{path}}/blur">
+                <input type="submit" value="Gray">
+            </form>
+            <form method="post" action="/filtering/{{path}}/blur">
+                <input type="submit" value="Sepia">
+            </form>
+            <form method="post" action="/filtering/{{path}}/blur">
+                <input type="submit" value="Poster">
+            </form>
+            <form method="post" action="/filtering/{{path}}/blur">
+                <input type="submit" value="Blur">
+            </form>
+            <form method="post" action="/filtering/{{path}}/blur">
+                <input type="submit" value="Edge">
+            </form>
+            <form method="post" action="/filtering/{{path}}/blur">
+                <input type="submit" value="Solar">
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
