@@ -1,0 +1,13 @@
+{% extends "filtering.html" %}
+
+{% block filtering %}
+        <h4>Filtering Output:</h4>
+        <img src="{{url_for('static', path=path) }}" height="200px" width="250px">
+
+{% endblock %}
+
+{% block download %}
+<a href="/download/{{path}}" >
+    <img src="https://cdn.iconscout.com/icon/free/png-512/download-button-1723003-1465295.png" height="100px" width="100px"/>
+</a>
+{% endblock %}

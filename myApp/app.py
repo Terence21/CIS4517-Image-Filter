@@ -2,8 +2,9 @@ import os
 from flask import Flask
 import functools
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, session, url_for, send_file
 )
+import s3
 
 app = Flask(__name__)
 
@@ -14,15 +15,26 @@ def homePage():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    file = request.files['file']
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(os.path.join('uploads', f.filename))
+        s3.upload_file(f.filename, s3.BUCKET_NAME)
+        return redirect('/filteringPage/' + f.filename)
 
-    return redirect('/filteringPage')
-
-@app.route('/filteringPage')
-def filterPage():
-    return render_template('filtering.html')
+@app.route('/filteringPage/<path>')
+def filterPage(path):
+    return render_template('filtering.html', path=path)
 
 @app.route('/filter/<path>')
-def submitFilter():
+def submitFilter(path, filter_type):
     return render_template('display.html')
+
+
+@app.route('/download/<filename>', methods=['GET'])
+def download(path):
+    out = s3.download_file(path, s3.BUCKET_NAME)
+    send_file(out, as_attachment= True)
+
+if __name__ == '__main__':
+    app.run()
 
