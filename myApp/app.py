@@ -6,13 +6,13 @@ from flask import (
 )
 import s3_worker
 
-
 app = Flask(__name__)
 
 
 @app.route('/')
 def homePage():
     return render_template('hello.html')
+
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -22,20 +22,25 @@ def submit():
         s3_worker.upload_file(f.filename, s3_worker.BUCKET_NAME)
         return redirect('/filteringPage/' + f.filename)
 
+
 @app.route('/filteringPage/<path>')
 def filterPage(path):
     return render_template('filtering.html', path=path)
 
-@app.route('/filter/<path>/<filter_type>', methods=['POST'])
+
+@app.route('/filteringPage/<path>/<filter_type>', methods=['POST'])
 def submitFilter(path, filter_type):
-    return render_template('download.html')
+    import filters
+
+    filters.imageFilter(path, filter_type)
+    return render_template('download.html', path=path)
 
 
-@app.route('/download/<path>', methods=['POST'])
+@app.route('/uploads/<path>', methods=['GET'])
 def download(path):
     out = s3_worker.download_file(path, s3_worker.BUCKET_NAME)
-    send_file(out, as_attachment= True)
+    return send_file(out, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run()
-

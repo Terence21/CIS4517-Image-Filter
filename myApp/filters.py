@@ -1,8 +1,9 @@
 from PIL import Image, ImageOps, ImageFilter
-
+import s3_worker
 
 def imageFilter(path, filter_type):
-    filter_type = filter_type.toLowerCase()
+    filter_type = filter_type.lower()
+    path = path.lower()
     im = Image.open('uploads/' + path)
     if filter_type == 'gray':
         im = ImageOps.grayscale(im)
@@ -16,6 +17,9 @@ def imageFilter(path, filter_type):
         im = im.filter(ImageFilter.FIND_EDGES)
     if filter_type == 'solar':
         im = ImageOps.solarize(im)
+
+    im.save('uploads/' + path, formats=None)
+    s3_worker.upload_file(path, s3_worker.BUCKET_NAME)
 
 
 def convertSepia(path) -> Image:

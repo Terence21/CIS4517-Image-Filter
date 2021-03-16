@@ -23,6 +23,6 @@ def upload_file(filename, bucket, object_name=None):
 
 
 def download_file(filename, bucket):
-    s3 = boto3.client('s3')
-    s3.download_file(BUCKET_NAME, f"download/{filename}")
-    return f"download/{filename}"
+
+    s3_client.download_file(BUCKET_NAME, filename, f'uploads/{filename}')
+    return f'uploads/{filename}'
