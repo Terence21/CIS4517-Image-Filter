@@ -1,6 +1,7 @@
 from PIL import Image, ImageOps, ImageFilter
 import s3_worker
 
+
 def imageFilter(path, filter_type):
     filter_type = filter_type.lower()
     path = path.lower()
@@ -18,8 +19,9 @@ def imageFilter(path, filter_type):
     if filter_type == 'solar':
         im = ImageOps.solarize(im)
 
-    im.save('uploads/' + path, formats=None)
+    im.save('downloads/' + path, formats=None)
     s3_worker.upload_file(path, s3_worker.BUCKET_NAME)
+    print("img: " + path)
 
 
 def convertSepia(path) -> Image:
@@ -27,24 +29,26 @@ def convertSepia(path) -> Image:
     width, height = img.size
 
     pixels = img.load()
+    try:
+        for py in range(height):
+            for px in range(width):
+                r, g, b = img.getpixel((px, py))
 
-    for py in range(height):
-        for px in range(width):
-            r, g, b = img.getpixel((px, py))
+                tr = int(0.393 * r + 0.769 * g + 0.189 * b)
+                tg = int(0.349 * r + 0.686 * g + 0.168 * b)
+                tb = int(0.272 * r + 0.534 * g + 0.131 * b)
 
-            tr = int(0.393 * r + 0.769 * g + 0.189 * b)
-            tg = int(0.349 * r + 0.686 * g + 0.168 * b)
-            tb = int(0.272 * r + 0.534 * g + 0.131 * b)
+                if tr > 255:
+                    tr = 255
 
-            if tr > 255:
-                tr = 255
+                if tg > 255:
+                    tg = 255
 
-            if tg > 255:
-                tg = 255
+                if tb > 255:
+                    tb = 255
 
-            if tb > 255:
-                tb = 255
-
-            pixels[px, py] = (tr, tg, tb)
+                pixels[px, py] = (tr, tg, tb)
+    except Exception:
+        print("Image cannot be converted to Sepia, bad RGB values")
 
     return img

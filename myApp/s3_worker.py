@@ -11,18 +11,20 @@ BUCKET_NAME = "terence-image-filter-bucket"
 
 
 def upload_file(filename, bucket, object_name=None):
+    print('uploading')
     if object_name is None:
         object_name = filename
 
     try:
-        response = s3_client.upload_file('uploads/' + filename, bucket, object_name)
+        s3_client.upload_file('downloads/' + filename, bucket, object_name)
+        print("done uploading")
     except ClientError as e:
+        print("error")
         logging.error(e)
         return False
     return True
 
 
 def download_file(filename, bucket):
-
-    s3_client.download_file(BUCKET_NAME, filename, f'uploads/{filename}')
-    return f'uploads/{filename}'
+    s3_client.download_file(BUCKET_NAME, filename, f'downloads/{filename}')
+    return f'downloads/{filename}'

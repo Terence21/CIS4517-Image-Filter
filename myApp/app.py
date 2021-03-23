@@ -18,28 +18,44 @@ def homePage():
 def submit():
     if request.method == 'POST':
         f = request.files['file']
-        f.save(os.path.join('uploads', f.filename))
-        s3_worker.upload_file(f.filename, s3_worker.BUCKET_NAME)
-        return redirect('/filteringPage/' + f.filename)
+        f.save(os.path.join('uploads', f.filename.lower()))
+        file = request.files['file']
+        file.save(os.path.join('downloads', file.filename.lower()))
+        s3_worker.upload_file(file.filename.lower(), s3_worker.BUCKET_NAME)
+        return redirect('/filteringPage/' + file.filename.lower())
 
 
 @app.route('/filteringPage/<path>')
 def filterPage(path):
-    return render_template('filtering.html', path=path)
+    path = path.lower()
+    upload = 'uploads/' + path
+    return render_template('filtering.html', **locals())
 
 
 @app.route('/filteringPage/<path>/<filter_type>', methods=['POST'])
 def submitFilter(path, filter_type):
+    path = path.lower()
     import filters
-
     filters.imageFilter(path, filter_type)
+    #   f = request.files['file']
+    # print(f)
+    #  s3_worker.upload_file(f.filename.lower(), s3_worker.BUCKET_NAME)
+    print('uploaded')
     return render_template('download.html', path=path)
 
 
 @app.route('/uploads/<path>', methods=['GET'])
 def download(path):
     out = s3_worker.download_file(path, s3_worker.BUCKET_NAME)
-    return send_file(out, as_attachment=True)
+    path = f'uploads/{path}'
+    f = open(path, "rb")
+    return send_file(f, attachment_filename=path)
+
+
+@app.route('/downloads/<path>', methods=['GET'])
+def load(path):
+    f = open(f"downloads/{path}", "rb")
+    return send_file(f, attachment_filename=path)
 
 
 if __name__ == '__main__':

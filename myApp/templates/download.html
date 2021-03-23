@@ -2,12 +2,12 @@
 
 {% block filtering %}
         <h4>Filtering Output:</h4>
-        <img src="{{url_for('filterPage', path=path) }}" height="200px" width="250px" alt="">
+        <img src="{{url_for('load', path=path) }}" height="200px" width="250px" alt="">
 
 {% endblock %}
 
 {% block download %}
-<a href="/uploads/{{path}}" >
+<a href="/downloads/{{path}}" >
     <img src="https://cdn.iconscout.com/icon/free/png-512/download-button-1723003-1465295.png" height="100px" width="100px" alt=""/>
 </a>
 {% endblock %}
