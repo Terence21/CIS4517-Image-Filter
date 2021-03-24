@@ -7,6 +7,7 @@ from flask import (
 import s3_worker
 
 app = Flask(__name__)
+app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
 @app.route('/')
@@ -55,7 +56,8 @@ def download(path):
 @app.route('/downloads/<path>', methods=['GET'])
 def load(path):
     f = open(f"downloads/{path}", "rb")
-    return send_file(f, attachment_filename=path)
+    return send_file(f, attachment_filename=path, as_attachment=True)
+
 
 
 if __name__ == '__main__':
