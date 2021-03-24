@@ -1,7 +1,7 @@
 from PIL import Image, ImageOps, ImageFilter
 import s3_worker
 
-
+# filter image save to downloads, and upload to s3
 def imageFilter(path, filter_type):
     filter_type = filter_type.lower()
     path = path.lower()
@@ -23,7 +23,7 @@ def imageFilter(path, filter_type):
     s3_worker.upload_file(path, s3_worker.BUCKET_NAME)
     print("img: " + path)
 
-
+# manual conversion to sepia
 def convertSepia(path) -> Image:
     img = Image.open('uploads/' + path)
     width, height = img.size

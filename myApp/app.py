@@ -10,11 +10,13 @@ app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 
 
+# render hello template page
 @app.route('/')
 def homePage():
     return render_template('hello.html')
 
 
+# from submit button in hello, take the uploaded file from page and uploads to s3
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':
@@ -33,18 +35,17 @@ def filterPage(path):
     return render_template('filtering.html', **locals())
 
 
+# on filter selection, filter image
 @app.route('/filteringPage/<path>/<filter_type>', methods=['POST'])
 def submitFilter(path, filter_type):
     path = path.lower()
     import filters
     filters.imageFilter(path, filter_type)
-    #   f = request.files['file']
-    # print(f)
-    #  s3_worker.upload_file(f.filename.lower(), s3_worker.BUCKET_NAME)
     print('uploaded')
     return render_template('download.html', path=path)
 
 
+# for loading initial file submission, return initial file
 @app.route('/uploads/<path>', methods=['GET'])
 def download(path):
     out = s3_worker.download_file(path, s3_worker.BUCKET_NAME)
@@ -53,11 +54,11 @@ def download(path):
     return send_file(f, attachment_filename=path)
 
 
+# for loading file after submission, return filtered file
 @app.route('/downloads/<path>', methods=['GET'])
 def load(path):
     f = open(f"downloads/{path}", "rb")
     return send_file(f, attachment_filename=path, as_attachment=True)
-
 
 
 if __name__ == '__main__':

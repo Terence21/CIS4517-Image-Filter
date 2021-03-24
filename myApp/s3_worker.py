@@ -6,10 +6,9 @@ import configurations
 
 session = boto3.Session( aws_access_key_id=configurations.ACCESS_KEY, aws_secret_access_key=configurations.SECRET_KEY)
 s3_client = session.client('s3')
-
 BUCKET_NAME = "terence-image-filter-bucket"
 
-
+# upload file to s3 bucket
 def upload_file(filename, bucket, object_name=None):
     print('uploading')
     if object_name is None:
@@ -24,7 +23,7 @@ def upload_file(filename, bucket, object_name=None):
         return False
     return True
 
-
+# download file from s3 bucket
 def download_file(filename, bucket):
     s3_client.download_file(BUCKET_NAME, filename, f'downloads/{filename}')
     return f'downloads/{filename}'
